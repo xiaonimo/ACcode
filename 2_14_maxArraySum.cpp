@@ -24,6 +24,17 @@ public:
 		}
 		return sum;
 	}
+	//最小子数组,原理基本相同
+	int minArraySum(vector<int> nums) {
+		if (nums.empty()) return 0;
+		int min_sum = nums[0];
+		int min_end_here = nums[0];
+		for (int i = 1; i < nums.size(); ++i) {
+			min_end_here = min(nums[i], nums[i] + min_end_here);
+			min_sum = min(min_sum, min_end_here);
+		}
+		return min_sum;
+	}
 };
 
 int main(void)
