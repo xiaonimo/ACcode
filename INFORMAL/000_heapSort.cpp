@@ -71,7 +71,7 @@ void _max_heap::_max_heap_fixdown(int beg, int last) {
 
 	int i = last, j = (i - 1) / 2;
 	while (i >= 0) {
-		if (arr[i] < arr[j])
+		if (tmp < arr[j])
 			break;
 		arr[i] = arr[j];
 		i = j;
