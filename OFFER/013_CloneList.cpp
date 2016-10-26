@@ -41,7 +41,7 @@ public:
         while (newh) {//遍历一次链表，对每个节点找到random指针
             int step = 0;
             RandomListNode *pt2 = pHead;
-            while (pHead != pt->random)
+            while (pHead != pt2->random)
                 ++step;//记录步数
             RandomListNode *newr2 = newHead;
             while (step--)
@@ -53,9 +53,33 @@ public:
         return newHead;
     }
     //map关联
-    RandomListNode1* Clone(RandomListNode* pHead) {
+    RandomListNode* Clone1(RandomListNode* pHead) {
+        if (pHead == nullptr) return pHead;
+        map<RandomListNode*, RandomListNode*> hmap;
+        RandomListNode *newHead = new RandomListNode(pHead->label);
+        RandomListNode *newh = newHead;
+        RandomListNode *pt = pHead;
+        hmap[pt] = newh;
+        //先复制链表和next指针
+        while (pt->next) {
+            RandomListNode *tmp = new RandomListNode(pt->next->label);
+            newh->next = tmp;
+            hmap[pt->next] = newh->next;
+            newh = newh->next;
+            pt = pt->next;
+        }
+
+        newh = newHead;//变量复用一下
+        pt = pHead;
+        while (newh) {//遍历一次链表，对每个节点找到random指针
+            newh->random = hmap[pt->random];
+            pt = pt->next;
+            newh = newh->next;
+        }
+        return newHead;
+    }
     //next指针关联
-    RandomListNode2* Clone(RandomListNode* pHead) {
+    RandomListNode* Clone2(RandomListNode* pHead) {
         if (pHead == nullptr) return nullptr;
         RandomListNode *pt = pHead;
         //生成链表，只复制label和next
@@ -87,33 +111,8 @@ public:
         }
         return res;
     }
-        if (pHead == nullptr) return pHead;
-        map<RandomListNode*, RandomListNode*> hmap;
-        RandomListNode *newHead = new RandomListNode(pHead->label);
-        RandomListNode *newh = newHead;
-        RandomListNode *pt = pHead;
-        hmap[pt] = newh;
-        //先复制链表和next指针
-        while (pt->next) {
-            RandomListNode *tmp = new RandomListNode(pt->next->label);
-            newh->next = tmp;
-            hmap[pt->next] = newh->next;
-            newh = newh->next;
-            pt = pt->next;
-        }
-
-        newh = newHead;//变量复用一下
-        pt = pHead;
-        while (newh) {//遍历一次链表，对每个节点找到random指针
-            newh->random = hmap[pt->random];
-            pt = pt->next;
-            newh = newh->next;
-        }
-        return newHead;
-    }
 };
 
 int main() {
-
 
 }
