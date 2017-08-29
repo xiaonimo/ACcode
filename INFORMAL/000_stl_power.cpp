@@ -1,12 +1,4 @@
-﻿/**Title:
- * use two stacks to implement queue.pop and queue.push
- */
 #include<iostream>  
-#include<vector>
-#include<unordered_map>
-#include<queue>
-#include<algorithm>
-#include<stack>
 
 using namespace std;
 class Solution
