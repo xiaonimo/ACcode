@@ -1,0 +1,141 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x):val(x), left(nullptr), right(nullptr) {}
+};
+
+int cnt_leaves(TreeNode* root) {
+    if (!root) return 0;
+    return cnt_leaves(root->left) + cnt_leaves(root->right) + 1;
+}
+
+void tree2list(TreeNode* root, TreeNode* &first, TreeNode* &last) {
+    if (!root) {
+        return;
+    }
+    TreeNode *tfirst=nullptr, *tlast = nullptr;
+    if (root->left) {
+        tree2list(root->left, tfirst, tlast);
+        first = tfirst;
+        root->left = tlast;
+        tlast->right = root;
+    } else {
+        first = root;
+    }
+    if (root->right) {
+        tree2list(root->right, tfirst, tlast);
+        last = tlast;
+        root->right = tfirst;
+        tfirst->left = root;
+    } else {
+        last = root;
+    }
+}
+
+void tree_klevel_nodes(TreeNode* root, int &num, int len) {
+    if (!root) return;
+    if (len == 0) num += 1;
+    if (len < 0) return;
+    tree_klevel_nodes(root->left, num, len-1);
+    tree_klevel_nodes(root->right, num, len-1);
+}
+
+bool _find(TreeNode* root, const TreeNode* p) {
+    if (!root || !p) return false;
+    if (root == p) return true;
+    return _find(root->left, p) || _find(root->right, p);
+}
+
+TreeNode* LCA(TreeNode* root, const TreeNode* p1, const TreeNode* p2) {
+    if (!root || p1==root || p2==root) return root;
+    if (_find(root->left, p1)) {
+        if (_find(root->right, p2)) return root;
+        return LCA(root->left, p1, p2);
+    } else {
+        if (_find(root->left, p2)) return root;
+        return LCA(root->right, p1, p2);
+    }
+    return nullptr;
+}
+
+vector<TreeNode*> _get_path(TreeNode* root, const TreeNode* p) {
+    vector<TreeNode*> res;
+    res.push_back(root);
+    if (root == p) return res;
+    if (!root) return vector<TreeNode*>{};
+    auto _res = _get_path(root->left, p);
+    if (_res.empty()) {
+        _res = _get_path(root->right, p);
+    }
+    if (_res.empty()) return vector<TreeNode*> {};
+    for (auto pp:_res) res.push_back(pp);
+    return res;
+}
+
+TreeNode* LCA_LIST(TreeNode* root, const TreeNode* p1, const TreeNode* p2) {
+    auto path1 = _get_path(root, p1);
+    auto path2 = _get_path(root, p2);
+    TreeNode* res = nullptr;
+    auto bg1 = begin(path1), bg2 = begin(path2);
+    while (bg1 != end(path1) && bg2 != end(path2)) {
+        if (*bg1 == *bg2) res = *bg1;
+        bg1++;
+        bg2++;
+    }
+    return res;
+}
+
+bool isCTree(TreeNode* root) {
+    if (!root) return false;
+
+    bool flag=true;
+    queue<TreeNode*> que;
+    que.push(root);
+    while (!que.empty()) {
+        TreeNode* tmp = que.front();
+        que.pop();
+        if (!tmp) {
+            if (flag) flag = false;
+            else return false;
+        }
+        que.push(tmp->left);
+        que.push(tmp->right);
+    }
+    return true;
+}
+
+bool isBST(TreeNode* root) {
+    return _check_isBST1(root, 0x7fffffff, 0x80000000);
+    return _check_isBST2(root, 0x7fffffff);
+}
+bool _check_isBST1(TreeNode* root, int min_num, int max_num) {
+    if (!root) return true;
+    if (root->val < min_num || root->val > max_num) return false;
+    return _check_isBST(root->left, min_num, root->val) && _check_isBST(root->right, root->val, max_num);
+}
+
+bool _check_isBST2(TreeNode* root, int &last_val) {
+    if (!root) return true;
+    if (!_check_isBST2(root->left, last_val)) return false;
+    if (root->val < last_val) return false;
+    last_val = root->val;
+    return _check_isBST2(root->right, last_val);
+}
+
+int main() {
+    TreeNode l1(1), l2(2), l3(3), l4(4), l5(5), l6(6);
+    l3.left = &l2;
+    l3.right = &l5;
+    l2.left = &l1;
+    l5.left = &l4;
+    l5.right = &l6;
+
+}
+
+
